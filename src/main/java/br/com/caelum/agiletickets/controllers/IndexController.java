@@ -13,7 +13,6 @@ public class IndexController {
 	private Result result;
 	private Agenda agenda;
 	
-	/** @deprecated CDI eyes only*/
 	protected IndexController() {
 	}
 
