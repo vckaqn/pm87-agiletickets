@@ -22,6 +22,9 @@ public class EstabelecimentosController {
 	private Validator validator;
 	private DiretorioDeEstabelecimentos diretorio;
 	
+	protected EstabelecimentosController() {
+	}
+	
 	@Inject
 	public EstabelecimentosController(Result result, Validator validator, DiretorioDeEstabelecimentos diretorio) {
 		this.result = result;

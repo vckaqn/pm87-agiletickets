@@ -39,7 +39,9 @@ public class EspetaculosController {
 	private Validator validator;
 	private Agenda agenda;
 	private DiretorioDeEstabelecimentos estabelecimentos;
-	private Estabelecimento estabelecimento;
+	
+	protected EspetaculosController() {
+	}
 
 	@Inject
 	public EspetaculosController(Result result, Validator validator,
