@@ -3,6 +3,10 @@ package br.com.caelum.agiletickets.models;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Test;
 
 public class EspetaculoTest {
@@ -71,6 +75,62 @@ public class EspetaculoTest {
 		ivete.getSessoes().add(sessaoComIngressosSobrando(2));
 
 		assertFalse(ivete.Vagas(5, 3));
+	}
+
+	@Test
+	public void deveCriarSomenteUmaSessaoCasoAsDatasSejamIguais() {
+		Espetaculo e = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate();
+		LocalDate fim = new LocalDate();
+		LocalTime horario = new LocalTime(); 
+		Periodicidade periodicidade = Periodicidade.SEMANAL;
+		
+		List<Sessao> sessoes = e.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		assertTrue(sessoes.size() == 1);
+	}
+	
+	@Test
+	public void deveCriarSessoesDiariasEntreAsDatasDeInicioEFim() {
+		Espetaculo e = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate();
+		LocalDate fim = new LocalDate().plusDays(10);
+		LocalTime horario = new LocalTime(); 
+		Periodicidade periodicidade = Periodicidade.DIARIA;
+		
+		List<Sessao> sessoes = e.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		assertTrue(sessoes.size() == 11);
+	}
+	
+	@Test
+	public void deveCriarSessoesSemanaisEntreAsDatasDeInicioEFim() {
+		Espetaculo e = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate();
+		LocalDate fim = new LocalDate().plusDays(15);
+		LocalTime horario = new LocalTime(); 
+		Periodicidade periodicidade = Periodicidade.SEMANAL;
+		
+		List<Sessao> sessoes = e.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		assertTrue(sessoes.size() == 3);
+	}
+
+	@Test
+	public void naoDeveCriarSessaoCasoADataInicioMaiorQueDataFim() {
+		Espetaculo e = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate().plusDays(2);
+		LocalDate fim = new LocalDate();
+		LocalTime horario = new LocalTime(); 
+		Periodicidade periodicidade = Periodicidade.DIARIA;
+		
+		List<Sessao> sessoes = e.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		assertTrue(sessoes.size() == 0);
 	}
 
 	private Sessao sessaoComIngressosSobrando(int quantidade) {
