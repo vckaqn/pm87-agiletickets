@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.jboss.weld.exceptions.IllegalArgumentException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -103,29 +104,30 @@ public class Espetaculo {
 	public List<Sessao> criaSessoes(LocalDate inicio, LocalDate fim, LocalTime horario, Periodicidade periodicidade) {
 		List<Sessao> sessoes = new ArrayList<Sessao>();
 		
-		if (inicio.isEqual(fim)) {
-			sessoes.add(criarSessao(inicio));
+		if (inicio.isAfter(fim)) {
+			throw new IllegalArgumentException("Data inválida.");
+		}
+
+		int quantidadeSessoes = 0;
+		int quantidadeDias = 1;
+		if (periodicidade.equals(Periodicidade.DIARIA)) {
+			quantidadeSessoes = Days.daysBetween(inicio, fim).getDays();
 		} else {
-			if (periodicidade.equals(Periodicidade.DIARIA)) {
-				int diasDiferenca = Days.daysBetween(inicio, fim).getDays();
-				for (int dia = 0; dia <= diasDiferenca; dia++) {
-					sessoes.add(criarSessao(inicio.plusDays(dia)));
-				}
-			} else {
-				int semanasDiferenca = Weeks.weeksBetween(inicio, fim).getWeeks();
-				for (int dia = 0; dia <= semanasDiferenca; dia++) {
-					sessoes.add(criarSessao(inicio.plusDays(dia)));
-				}
-			}
+			quantidadeSessoes = Weeks.weeksBetween(inicio, fim).getWeeks();
+			quantidadeDias = 7;
+		}
+
+		for (int numeroSessao = 0; numeroSessao <= quantidadeSessoes; numeroSessao++) {
+			sessoes.add(criarSessao(inicio.plusDays(quantidadeDias * numeroSessao), horario));
 		}
 
 		return sessoes;
 	}
 	
-	private Sessao criarSessao(LocalDate inicio) {
+	private Sessao criarSessao(LocalDate inicio, LocalTime horario) {
 		Sessao sessao = new Sessao();
 		sessao.setEspetaculo(this);
-		sessao.setInicio(new DateTime(inicio.toDate()));
+		sessao.setInicio(inicio.toDateTime(horario));
 		return sessao;
 	}
 	

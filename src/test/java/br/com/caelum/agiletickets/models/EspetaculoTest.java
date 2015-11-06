@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class EspetaculoTest {
@@ -92,7 +93,7 @@ public class EspetaculoTest {
 	}
 	
 	@Test
-	public void deveCriarSessoesDiariasEntreAsDatasDeInicioEFim() {
+	public void devecriaSessoesDiariasEntreAsDatasDeInicioEFim() {
 		Espetaculo e = new Espetaculo();
 		
 		LocalDate inicio = new LocalDate();
@@ -106,7 +107,7 @@ public class EspetaculoTest {
 	}
 	
 	@Test
-	public void deveCriarSessoesSemanaisEntreAsDatasDeInicioEFim() {
+	public void devecriaSessoesSemanaisEntreAsDatasDeInicioEFim() {
 		Espetaculo e = new Espetaculo();
 		
 		LocalDate inicio = new LocalDate();
@@ -119,7 +120,7 @@ public class EspetaculoTest {
 		assertTrue(sessoes.size() == 3);
 	}
 
-	@Test
+	@Test(expected=IllegalArgumentException.class)
 	public void naoDeveCriarSessaoCasoADataInicioMaiorQueDataFim() {
 		Espetaculo e = new Espetaculo();
 		
@@ -128,9 +129,7 @@ public class EspetaculoTest {
 		LocalTime horario = new LocalTime(); 
 		Periodicidade periodicidade = Periodicidade.DIARIA;
 		
-		List<Sessao> sessoes = e.criaSessoes(inicio, fim, horario, periodicidade);
-		
-		assertTrue(sessoes.size() == 0);
+		e.criaSessoes(inicio, fim, horario, periodicidade);
 	}
 
 	private Sessao sessaoComIngressosSobrando(int quantidade) {
@@ -142,32 +141,32 @@ public class EspetaculoTest {
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void naoDeveriaCriarSessoesDiariasQuandoDataInicioMaiorQueDataFim() {
+	public void naoDeveriacriaSessoesDiariasQuandoDataInicioMaiorQueDataFim() {
 		//DADAS ESTAS ENTRADAS:
 		LocalDate hoje = new LocalDate();
-	  	LocalDate amanha = fim.plusDays(1);
+	  	LocalDate amanha = hoje.plusDays(1);
 	  	LocalTime agora = new LocalTime();
 	  	Periodicidade diaria = Periodicidade.DIARIA;
 	  
 	  	//QUANDO EU DISPARAR O PROCESSAMENTO:
 	  	Espetaculo show = new Espetaculo();
-	  	List<Sessoes> sessoes = show.criarSessoes(amanha, hoje, agora, diaria);
+	  	List<Sessao> sessoes = show.criaSessoes(amanha, hoje, agora, diaria);
 	  
 	  	//ESTAS SAO AS SAIDAS ESPERADAS:
 	  	//Nao tem asserts pq deveria jogar exception...
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void naoDeveriaCriarSessoesSemanaisQuandoDataInicioMaiorQueDataFim() {
+	public void naoDeveriacriaSessoesSemanaisQuandoDataInicioMaiorQueDataFim() {
 		//DADAS ESTAS ENTRADAS:
 		LocalDate hoje = new LocalDate();
-	  	LocalDate amanha = fim.plusDays(1);
+	  	LocalDate amanha = hoje.plusDays(1);
 	  	LocalTime agora = new LocalTime();
 	  	Periodicidade semanal = Periodicidade.SEMANAL;
 	  
 	  	//QUANDO EU DISPARAR O PROCESSAMENTO:
 	  	Espetaculo show = new Espetaculo();
-	  	List<Sessoes> sessoes = show.criarSessoes(amanha, hoje, agora, semanal);
+	  	List<Sessao> sessoes = show.criaSessoes(amanha, hoje, agora, semanal);
 	  
 	  	//ESTAS SAO AS SAIDAS ESPERADAS:
 	  	//Nao tem asserts pq deveria jogar exception...
@@ -182,7 +181,7 @@ public class EspetaculoTest {
 	  
 	  	//QUANDO EU DISPARAR O PROCESSAMENTO:
 	  	Espetaculo show = new Espetaculo();
-	  	List<Sessoes> sessoes = show.criarSessoes(hoje, hoje, agora, diaria);
+	  	List<Sessao> sessoes = show.criaSessoes(hoje, hoje, agora, diaria);
 	  
 	  	//ESTAS SAO AS SAIDAS ESPERADAS:
 		Assert.assertEquals(1, sessoes.size());
@@ -202,7 +201,7 @@ public class EspetaculoTest {
 	  
 	  	//QUANDO EU DISPARAR O PROCESSAMENTO:
 	  	Espetaculo show = new Espetaculo();
-	  	List<Sessoes> sessoes = show.criarSessoes(hoje, hoje, agora, semanal);
+	  	List<Sessao> sessoes = show.criaSessoes(hoje, hoje, agora, semanal);
 	  
 	  	//ESTAS SAO AS SAIDAS ESPERADAS:
 		Assert.assertEquals(1, sessoes.size());
@@ -223,13 +222,14 @@ public class EspetaculoTest {
 	  
 	  	//QUANDO EU DISPARAR O PROCESSAMENTO:
 	  	Espetaculo show = new Espetaculo();
-	  	List<Sessoes> sessoes = show.criarSessoes(hoje, daquiQuatroDias, agora, diaria);
+	  	List<Sessao> sessoes = show.criaSessoes(hoje, daquiQuatroDias, agora, diaria);
 	  
 	  	//ESTAS SAO AS SAIDAS ESPERADAS:
 		Assert.assertEquals(5, sessoes.size());
 	  
 	  	//Nao basta apenas verificar o size da lista, precisa garantir que criou as sessoes corretamente:
-		for(int i = 0; i <= sessoes.size(); i++) {
+		for(int i = 0; i < sessoes.size(); i++) {
+			Sessao criada = sessoes.get(i);
 			Assert.assertEquals(show, criada.getEspetaculo());
 			Assert.assertEquals(hoje.plusDays(i).toDateTime(agora), criada.getInicio());
 	    }
@@ -241,17 +241,18 @@ public class EspetaculoTest {
 		LocalDate hoje = new LocalDate();
 	  	LocalDate daquiQuatroSemanas = hoje.plusWeeks(4);
 	  	LocalTime agora = new LocalTime();
-	  	Periodicidade diaria = Periodicidade.SEMANAL;
+	  	Periodicidade semanal = Periodicidade.SEMANAL;
 	  
 	  	//QUANDO EU DISPARAR O PROCESSAMENTO:
 	  	Espetaculo show = new Espetaculo();
-	  	List<Sessoes> sessoes = show.criarSessoes(hoje, daquiQuatroSemanas, agora, semanal);
+	  	List<Sessao> sessoes = show.criaSessoes(hoje, daquiQuatroSemanas, agora, semanal);
 	  
 	  	//ESTAS SAO AS SAIDAS ESPERADAS:
 		Assert.assertEquals(5, sessoes.size());
 	  
 	  	//Nao basta apenas verificar o size da lista, precisa garantir que criou as sessoes corretamente:
-		for(int i = 0; i <= sessoes.size(); i++) {
+		for(int i = 0; i < sessoes.size(); i++) {
+			Sessao criada = sessoes.get(i);
 			Assert.assertEquals(show, criada.getEspetaculo());
 			Assert.assertEquals(hoje.plusWeeks(i).toDateTime(agora), criada.getInicio());
 	    }
