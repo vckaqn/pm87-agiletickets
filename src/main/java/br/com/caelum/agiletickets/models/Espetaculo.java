@@ -114,7 +114,7 @@ public class Espetaculo {
 			quantidadeSessoes = Days.daysBetween(inicio, fim).getDays();
 		} else {
 			quantidadeSessoes = Weeks.weeksBetween(inicio, fim).getWeeks();
-			quantidadeDias = 7;
+			//quantidadeDias = 7;
 		}
 
 		for (int numeroSessao = 0; numeroSessao <= quantidadeSessoes; numeroSessao++) {
