@@ -105,7 +105,7 @@ public class Espetaculo {
 		List<Sessao> sessoes = new ArrayList<Sessao>();
 		
 		if (inicio.isAfter(fim)) {
-			throw new IllegalArgumentException("Data inválida.");
+			!!!!throw new IllegalArgumentException("Data inválida.");
 		}
 
 		int quantidadeSessoes = 0;
