@@ -238,7 +238,7 @@ public class EspetaculoTest {
 	@Test
 	public void deveriaCriarCincoSessoesParaPeriodicidadeSemanalComIntervaloDeCincoSemanas() {
 		//DADAS ESTAS ENTRADAS:
-		!!!!!!!!!!!LocalDate hoje = new LocalDate();
+		LocalDate hoje = new LocalDate();
 	  	LocalDate daquiQuatroSemanas = hoje.plusWeeks(4);
 	  	LocalTime agora = new LocalTime();
 	  	Periodicidade semanal = Periodicidade.SEMANAL;
